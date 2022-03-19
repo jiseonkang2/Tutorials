@@ -125,7 +125,7 @@ display(void)
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    glUniform3fv(theta, 1, Theta);
+    glUniform3fv(theta, 1, Theta); // DegreesToRadians in the vertex shader
     glDrawArrays(GL_TRIANGLES, 0, NumVertices);
 
     glutSwapBuffers();
@@ -163,7 +163,7 @@ mouse(int button, int state, int x, int y)
 void
 idle(void)
 {
-    Theta[Axis] += 0.01;
+    Theta[Axis] += 0.1;
 
     if (Theta[Axis] > 360.0) {
         Theta[Axis] -= 360.0;

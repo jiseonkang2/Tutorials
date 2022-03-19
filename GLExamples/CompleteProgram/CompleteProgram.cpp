@@ -99,8 +99,8 @@ InitShader(const char* vShaderFile, const char* fShaderFile)
 {
 	struct Shader {
 		const char* filename;
-		GLenum       type;
-		GLchar* source;
+		GLenum		type;
+		GLchar*		source;
 	}  shaders[2] = {
 	{ vShaderFile, GL_VERTEX_SHADER, NULL },
 	{ fShaderFile, GL_FRAGMENT_SHADER, NULL }
@@ -111,7 +111,7 @@ InitShader(const char* vShaderFile, const char* fShaderFile)
 	for (int i = 0; i < 2; ++i) {
 		Shader& s = shaders[i];
 		s.source = readShaderSource(s.filename);
-		if (shaders[i].source == NULL) {
+		if (s.source == NULL) {
 			std::cerr << "Failed to read " << s.filename << std::endl;
 			exit(EXIT_FAILURE);
 		}
