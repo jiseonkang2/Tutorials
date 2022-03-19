@@ -15,3 +15,7 @@
 10. Cube with textures
 11. Robot
 12. Teapot (Subdivision)
+13. Wave (Animation)
+14. Morph (Animation)
+15. Cube (Non-Photo)
+16. Sierpinski Gasket (FBO)
