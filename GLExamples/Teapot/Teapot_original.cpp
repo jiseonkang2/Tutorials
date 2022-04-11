@@ -1,4 +1,4 @@
-﻿// Teapot.cpp : 
+﻿// Teapot_original.cpp : 
 //
 
 #include <stdlib.h>
@@ -12,114 +12,22 @@ using namespace glm;
 #include "vertices.h"
 #include "patches.h"
 
-const int NumTimesToSubdivide = 3;
-const int PatchesPerSubdivision = 4;
-const int NumQuadsPerPatch = (int)pow(PatchesPerSubdivision, NumTimesToSubdivide);
-const int NumTriangles = (NumTeapotPatches * NumQuadsPerPatch * 2 /* triangles / quad */);
-const int NumVertices = (NumTriangles * 3 /* vertices / triangle */);
+const int NumTriangles = (NumTeapotPatches * 2);
+const int NumVertices = (NumTriangles * 3);
 
-int     Index = 0;
-//vec4    points[NumVertices];
-vec4*   points;
+vec4    points[NumVertices];
 
 GLuint  Projection;
 
 enum { X = 0, Y = 1, Z = 2 };
 
-//----------------------------------------------------------------------------
-
-void
-divide_curve(vec4 c[4], vec4 r[4], vec4 l[4])
-{
-    // Subdivide a Bezier curve into two equaivalent Bezier curves:
-    //   left (l) and right (r) sharing the midpoint of the middle
-    //   control point
-    vec4  t, mid = (c[1] + c[2]) / vec4(2);
-
-    l[0] = c[0];
-    l[1] = (c[0] + c[1]) / vec4(2);
-    l[2] = (l[1] + mid) / vec4(2);
-
-    r[3] = c[3];
-    r[2] = (c[2] + c[3]) / vec4(2);
-    r[1] = (mid + r[2]) / vec4(2);
-
-    l[3] = r[0] = (l[2] + r[1]) / vec4(2);
-
-    for (int i = 0; i < 4; ++i) {
-        l[i].w = 1.0;
-        r[i].w = 1.0;
-    }
-}
-
-//----------------------------------------------------------------------------
-
-void
-draw_patch(vec4 p[4][4])
-{
-    // Draw the quad (as two triangles) bounded by the corners of the
-    //   Bezier patch.
-    points[Index++] = p[0][0];
-    points[Index++] = p[3][0];
-    points[Index++] = p[3][3];
-    points[Index++] = p[0][0];
-    points[Index++] = p[3][3];
-    points[Index++] = p[0][3];
-}
-
-//----------------------------------------------------------------------------
-
-inline void
-transpose(vec4 a[4][4])
-{
-    for (int i = 0; i < 4; i++) {
-        for (int j = i; j < 4; j++) {
-            vec4 t = a[i][j];
-            a[i][j] = a[j][i];
-            a[j][i] = t;
-        }
-    }
-}
-
-void
-divide_patch(vec4 p[4][4], int count)
-{
-    if (count > 0) {
-        vec4 q[4][4], r[4][4], s[4][4], t[4][4];
-        vec4 a[4][4], b[4][4];
-
-        // subdivide curves in u direction, transpose results, divide
-        // in u direction again (equivalent to subdivision in v)
-        for (int k = 0; k < 4; ++k) {
-            divide_curve(p[k], a[k], b[k]);
-        }
-
-        transpose(a);
-        transpose(b);
-
-        for (int k = 0; k < 4; ++k) {
-            divide_curve(a[k], q[k], r[k]);
-            divide_curve(b[k], s[k], t[k]);
-        }
-
-        // recursive division of 4 resulting patches
-        divide_patch(q, count - 1);
-        divide_patch(r, count - 1);
-        divide_patch(s, count - 1);
-        divide_patch(t, count - 1);
-    }
-    else {
-        draw_patch(p);
-    }
-}
 
 //----------------------------------------------------------------------------
 
 void
 init(void)
 {
-    points = (vec4*)malloc(sizeof(vec4) * NumVertices);
-
+    int Index = 0;
     for (int n = 0; n < NumTeapotPatches; n++) {
         vec4  patch[4][4];
 
@@ -131,8 +39,14 @@ init(void)
             }
         }
 
-        // Subdivide the patch
-        divide_patch(patch, NumTimesToSubdivide);
+        // Draw the quad (as two triangles) bounded by the corners of the
+        //   Bezier patch.
+        points[Index++] = patch[0][0];
+        points[Index++] = patch[3][0];
+        points[Index++] = patch[3][3];
+        points[Index++] = patch[0][0];
+        points[Index++] = patch[3][3];
+        points[Index++] = patch[0][3];
     }
 
     // Create a vertex array object
@@ -204,11 +118,12 @@ void
 keyboard(unsigned char key, int x, int y)
 {
     switch (key) {
-    case 'q': case 'Q': case 033 /* Escape key */:
+    case 'q': case 'Q': case 27 /* Escape key */:
         exit(EXIT_SUCCESS);
         break;
     }
 }
+
 
 //----------------------------------------------------------------------------
 
@@ -220,7 +135,7 @@ main(int argc, char* argv[])
     glutInitWindowSize(512, 512);
     glutInitContextVersion(3, 2);
     glutInitContextProfile(GLUT_CORE_PROFILE);
-    glutCreateWindow("teapot");
+    glutCreateWindow("Utah Teapot");
 
     glewInit();
 

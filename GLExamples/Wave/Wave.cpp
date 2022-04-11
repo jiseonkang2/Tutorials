@@ -130,8 +130,8 @@ main(int argc, char** argv)
 {
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE);
-    //glutInitWindowSize(512, 512);
-    glutInitWindowSize(1280, 720);
+    glutInitWindowSize(512, 512);
+    //glutInitWindowSize(1280, 720);
     glutCreateWindow("Waving mesh example");
 
     glewInit();

@@ -97,12 +97,28 @@ idle()
 
 //----------------------------------------------------------------------------
 
+void
+reshape(int width, int height)
+{
+    glViewport(280, 0, 720, 720);
+}
+
+//----------------------------------------------------------------------------
+
+#define HD_VIEW 0
+
 int
 main(int argc, char** argv)
 {
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE);
+#if HD_VIEW
+    glutInitWindowSize(1280, 720);
+#else
     glutInitWindowSize(512, 512);
+#endif
+
+
     glutCreateWindow("Mophing");
 
     glewInit();
@@ -112,6 +128,9 @@ main(int argc, char** argv)
     glutDisplayFunc(display);
     glutKeyboardFunc(keyboard);
     glutIdleFunc(idle);
+#if HD_VIEW
+    glutReshapeFunc(reshape);
+#endif
 
     glutMainLoop();
 

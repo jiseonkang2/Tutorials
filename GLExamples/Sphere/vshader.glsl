@@ -18,9 +18,8 @@ void main()
     fE = vPosition.xyz;
     fL = LightPosition.xyz;
     
-    if( LightPosition.w != 0.0 ) {
-	fL = LightPosition.xyz - vPosition.xyz;
-    }
+    if( LightPosition.w != 0.0 )
+        fL = LightPosition.xyz - vPosition.xyz;
 
     gl_Position = Projection*ModelView*vPosition;
 }
